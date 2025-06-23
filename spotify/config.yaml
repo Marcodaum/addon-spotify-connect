@@ -11,7 +11,6 @@ arch:
   - i386
 homeassistant_api: true
 host_network: true
-image: marcodaum/addon-spotify-connect-{arch}
 audio: true
 options:
   name: Home Assistant
