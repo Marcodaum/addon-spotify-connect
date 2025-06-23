@@ -7,22 +7,33 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
 # hadolint ignore=DL3003
-RUN apk add --no-cache \
-      build-base \
-      curl \
-      git \
-      protobuf-dev \
-      pulseaudio-dev \
-      pulseaudio \
-      pkgconfig \
-      openssl-dev \
-      alsa-lib-dev \
-    && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable \
-    && export PATH="$HOME/.cargo/bin:$PATH" \
-    && cargo install --locked --no-default-features --features pulseaudio-backend --root /usr --bin librespot --version 0.3.1 --verbose\
-    && apk del build-base curl git protobuf-dev pulseaudio-dev pkgconfig openssl-dev alsa-lib-dev \
-    && rm -rf /root/.cargo /root/.rustup /tmp/*
-
+RUN \
+    apk add --no-cache --virtual .build-dependencies \
+        build-base=0.5-r2 \
+        cargo=1.52.1-r1 \
+        git=2.32.0-r0 \
+        protobuf-dev=3.15.7-r1 \
+        pulseaudio-dev=14.2-r5 \
+    \
+    && apk add --no-cache \
+        pulseaudio=14.2-r5 \
+    \
+    && cargo install \
+        --locked \
+        --no-default-features \
+        --features pulseaudio-backend \
+        --root /usr \
+        --bin librespot \
+        --version 0.4.2 \
+        --verbose \
+        -- librespot \
+    \
+    && apk del --no-cache --purge .build-dependencies \
+    && rm -fr \
+        /tmp/* \
+        ~/.cargo \
+        /usr/.crates.toml \
+        /usr/.crates2.json
 
 # Copy root filesystem
 COPY rootfs /
