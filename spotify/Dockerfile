@@ -19,7 +19,7 @@ RUN apk add --no-cache \
       alsa-lib-dev \
     && curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable \
     && export PATH="$HOME/.cargo/bin:$PATH" \
-    && cargo install --locked --no-default-features --features pulseaudio-backend --root /usr --bin librespot --version 0.4.2 --verbose \
+    && cargo install --locked --no-default-features --features pulseaudio-backend --root /usr --bin librespot --version 0.3.1 --verbose\
     && apk del build-base curl git protobuf-dev pulseaudio-dev pkgconfig openssl-dev alsa-lib-dev \
     && rm -rf /root/.cargo /root/.rustup /tmp/*
 
