@@ -7,17 +7,14 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
 # hadolint ignore=DL3003
-RUN \
-    apk add --no-cache --virtual .build-dependencies \
-        build-base=0.5-r2 \
-        cargo=1.52.1-r1 \
-        git=2.32.0-r0 \
-        protobuf-dev=3.15.7-r1 \
-        pulseaudio-dev=14.2-r5 \
-    \
-    && apk add --no-cache \
-        pulseaudio=14.2-r5 \
-    \
+RUN apk add --no-cache --virtual .build-deps \
+        build-base \
+        rust \
+        cargo \
+        git \
+        protobuf-dev \
+        pulseaudio-dev \
+    && apk add --no-cache pulseaudio \
     && cargo install \
         --locked \
         --no-default-features \
@@ -25,15 +22,9 @@ RUN \
         --root /usr \
         --bin librespot \
         --version 0.4.2 \
-        --verbose \ 
-        -- librespot \
-    \
-    && apk del --no-cache --purge .build-dependencies \
-    && rm -fr \
-        /tmp/* \
-        ~/.cargo \
-        /usr/.crates.toml \
-        /usr/.crates2.json
+        --verbose \
+    && apk del --no-cache --purge .build-deps \
+    && rm -rf /tmp/* ~/.cargo /usr/.crates.toml /usr/.crates2.json
 
 # Copy root filesystem
 COPY rootfs /
